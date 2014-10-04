@@ -2,14 +2,14 @@ how to build
 --------------------
 
 ```
-sudo docker build -t ambari/build build_env/
+sudo docker build -t ambari/build .
 ```
 
 how to run
 --------------------
 
 ```
-sudo docker run -t -i -h host1.mydomain.com -v /home/jaoki/coding/ambari:/root/ambari ambari/build bash
+sudo docker run -t -i -h host1.mydomain.com -v ${HOME}/ambari:/root/ambari ambari/build bash
 ```
 
 how to build ambari
