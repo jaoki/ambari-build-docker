@@ -45,8 +45,8 @@ RUN git clone https://github.com/apache/ambari.git
 WORKDIR /root/ambari
 RUN mvn versions:set -DnewVersion=1.6.1.0
 # RUN mvn -B clean install package rpm:rpm -DnewVersion=1.6.1.0 -Dpython.ver="python >= 2.6" -Preplaceurl
-# RUN mvn -B clean install package rpm:rpm -DskipTests -DnewVersion=1.6.1.0 -Dpython.ver="python >= 2.6" -Preplaceurl
-RUN mvn dependency:go-offline
+RUN mvn -B clean install package rpm:rpm -DskipTests -DnewVersion=1.6.1.0 -Dpython.ver="python >= 2.6" -Preplaceurl
+# RUN mvn dependency:go-offline # We should use this but there is a blocker https://issues.apache.org/jira/browse/AMBARI-7005
 
 # also build ambari-log4j and install
 WORKDIR /root/ambari/contrib/ambari-log4j

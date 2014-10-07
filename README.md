@@ -9,7 +9,7 @@ how to run
 --------------------
 
 ```
-sudo docker run --privileged -t -i -p 5005:5005 -p 8080:8080 -h host1.mydomain.com -v $(pwd):/root/ambari ambari/build bash
+sudo docker run --privileged -t -i -p 5005:5005 -p 8080:8080 -h host1.mydomain.com -v ${AMBARI_SRC:-$(pwd)}:/root/ambari ambari/build bash
 # where 5005 is java debug port and 8080 is the default http port, if no --privileged ambari-server start fails due to access to /proc/??/exe
 ```
 
