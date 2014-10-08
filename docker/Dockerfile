@@ -57,9 +57,9 @@ RUN mkdir -p /tmp/ambari-build-docker
 ADD . /tmp/ambari-build-docker
 
 RUN mkdir -p /tmp/ambari-build-docker/blueprints
-ADD ./blueprints /tmp/ambari-build-docker/blueprints
+ADD ./blueprints/. /tmp/ambari-build-docker/blueprints
 RUN mkdir -p /tmp/ambari-build-docker/bin
-ADD ./bin /tmp/ambari-build-docker/bin
+ADD ./bin/. /tmp/ambari-build-docker/bin
 
 WORKDIR /tmp
 
