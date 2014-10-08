@@ -9,8 +9,13 @@ how to run
 --------------------
 
 ```
-sudo docker run --privileged -t -i -p 5005:5005 -p 8080:8080 -h host1.mydomain.com -v ${AMBARI_SRC:-$(pwd)}:/root/ambari ambari/build bash
+# bash
+sudo docker run --privileged -t -i -p 5005:5005 -p 8080:8080 -h host1.mydomain.com -v ${AMBARI_SRC}:/tmp/ambari ambari/build bash
 # where 5005 is java debug port and 8080 is the default http port, if no --privileged ambari-server start fails due to access to /proc/??/exe
+
+# build, install ambari and deploy hadoop in container
+sudo docker run --privileged -t -i -p 5005:5005 -p 8080:8080 -h host1.mydomain.com -v ${AMBARI_BUILD_DOCKER}:/tmp/ambari-build-docker -v ${AMBARI_SRC}:/tmp/ambari ambari/build /tmp/ambari-build-docker/install.sh
+
 ```
 
 how to build ambari
@@ -26,6 +31,7 @@ how to install ambari
 ```
 sudo yum install -y ambari-server/target/rpm/ambari-server/RPMS/noarch/ambari-server-*.noarch.rpm ambari-agent/target/rpm/ambari-agent/RPMS/x86_64/ambari-agent-*.x86_64.rpm
 
+sudo service ntpd start
 echo -e '\n\n\n\n' | sudo ambari-server setup
 sudo ambari-server start # or --debug
 

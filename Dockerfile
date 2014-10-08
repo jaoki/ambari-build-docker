@@ -3,7 +3,7 @@ FROM centos:centos6
 RUN echo root:changeme | chpasswd
 
 ## Install some basic utilities that aren't in the default image
-RUN yum -y install vim wget rpm-build sudo which telnet tar openssh-server openssh-clients ntp
+RUN yum -y install vim wget rpm-build sudo which telnet tar openssh-server openssh-clients ntp git python-setuptools
 RUN rpm -e --nodeps --justdb glibc-common
 RUN yum -y install glibc-common
 
@@ -33,28 +33,25 @@ RUN chmod 600 /root/.ssh/authorized_keys
 RUN sed -ri 's/UsePAM yes/UsePAM no/g' /etc/ssh/sshd_config
 
 # Install python, nodejs and npm
-RUN yum -y install python-setuptools
 RUN yum -y install http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
 RUN yum -y install nodejs npm --enablerepo=epel
 RUN npm install -g brunch@1.7.13
-RUN yum -y install git
 
 # Once run some mvn commands to cache .m2/repository
-WORKDIR /root
+WORKDIR /tmp
 RUN git clone https://github.com/apache/ambari.git
-WORKDIR /root/ambari
+WORKDIR /tmp/ambari
 RUN mvn versions:set -DnewVersion=1.6.1.0
-# RUN mvn -B clean install package rpm:rpm -DnewVersion=1.6.1.0 -Dpython.ver="python >= 2.6" -Preplaceurl
 RUN mvn -B clean install package rpm:rpm -DskipTests -DnewVersion=1.6.1.0 -Dpython.ver="python >= 2.6" -Preplaceurl
 
 # also build ambari-log4j and install
-WORKDIR /root/ambari/contrib/ambari-log4j
+WORKDIR /tmp/ambari/contrib/ambari-log4j
 RUN mvn package rpm:rpm
 RUN yum install -y  target/rpm/ambari-log4j/RPMS/noarch/ambari-log4j-1.2.1-*.noarch.rpm
 
 # clean git code because I want to use the one on local filesystem.
-WORKDIR /root
-RUN rm -rf /root/ambari
+WORKDIR /tmp
+RUN rm -rf /tmp/ambari
 
-WORKDIR /root/ambari
+WORKDIR /tmp
 
