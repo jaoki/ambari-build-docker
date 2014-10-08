@@ -15,7 +15,7 @@ sudo docker run --privileged -t -i -p 5005:5005 -p 8080:8080 -h host1.mydomain.c
 
 # build, install ambari and deploy hadoop in container
 cd {ambari src}
-sudo docker run --privileged -t -i -p 5005:5005 -p 8080:8080 -h host1.mydomain.com --name ambari1 -v  ${AMBARI_SRC:-$(pwd)}:/tmp/ambari ambari/build /tmp/ambari-build-docker/install.sh
+sudo docker run --privileged -t -i -p 5005:5005 -p 8080:8080 -h host1.mydomain.com --name ambari1 -v ${AMBARI_SRC:-$(pwd)}:/tmp/ambari ambari/build /tmp/ambari-build-docker/install.sh
 
 ```
 
