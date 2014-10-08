@@ -1,5 +1,5 @@
 {
-	configurations" : [
+	"configurations" : [
 		{
 			"nagios-env" : {
 				"nagios_contact": "me@my-awesome-domain.example"
