@@ -53,5 +53,10 @@ RUN yum install -y  target/rpm/ambari-log4j/RPMS/noarch/ambari-log4j-1.2.1-*.noa
 WORKDIR /tmp
 RUN rm -rf /tmp/ambari
 
+RUN mkdir -p /tmp/ambari-build-docker
+ADD ./install.sh /tmp/ambari-build-docker
+ADD ./single-node-HDP-2.1-blueprint1.json /tmp/ambari-build-docker
+ADD ./single-node-hostmapping1.json /tmp/ambari-build-docker
+
 WORKDIR /tmp
 
