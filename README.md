@@ -46,8 +46,8 @@ how to deploy Hadoop
 
 ```
 # find IP of container
-AMBARI1_IP=`docker inspect --format='{{.NetworkSettings.IPAddress}}' ambari1`
-curl -X POST -D - -d @single-node-blueprint1.json http://${AMBARI1_IP}:8080/api/v1/blueprints/myblueprint1 --header "Authorization:Basic YWRtaW46YWRtaW4=" --header "X-Requested-By: PIVOTAL"
+AMBARI1_IP=`docker inspect --format='{{.NetworkSettings.IPAddress}}' ambari1` && echo $AMBARI1_IP
+curl -X POST -D - -d @single-node-HDP-2.1-blueprint1.json http://${AMBARI1_IP}:8080/api/v1/blueprints/myblueprint1 --header "Authorization:Basic YWRtaW46YWRtaW4=" --header "X-Requested-By: PIVOTAL"
 curl -X POST -D - -d @single-node-hostmapping1.json http://${AMBARI1_IP}:8080/api/v1/clusters/mycluster1 --header "Authorization:Basic YWRtaW46YWRtaW4=" --header "X-Requested-By: PIVOTAL"
 curl -X GET -D - http://${AMBARI1_IP}:8080/api/v1/clusters/mycluster1/requests/1 --header "Authorization:Basic YWRtaW46YWRtaW4=" --header "X-Requested-By: PIVOTAL"
 ```
