@@ -17,5 +17,5 @@ sudo service sshd start
 sudo sed -i "s/hostname=localhost/hostname=$(hostname -f)/g" /etc/ambari-agent/conf/ambari-agent.ini && service ambari-agent start
 
 # keep container running
-tail -f /tmp/ambari-build-docker/README.md
+tail -f /tmp/ambari-build-docker/bin/install.sh
 
