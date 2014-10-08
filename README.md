@@ -14,7 +14,8 @@ sudo docker run --privileged -t -i -p 5005:5005 -p 8080:8080 -h host1.mydomain.c
 # where 5005 is java debug port and 8080 is the default http port, if no --privileged ambari-server start fails due to access to /proc/??/exe
 
 # build, install ambari and deploy hadoop in container
-sudo docker run --privileged -t -i -p 5005:5005 -p 8080:8080 -h host1.mydomain.com --name ambari1 -v ${AMBARI_SRC}:/tmp/ambari ambari/build /tmp/ambari-build-docker/install.sh
+cd {ambari src}
+sudo docker run --privileged -t -i -p 5005:5005 -p 8080:8080 -h host1.mydomain.com --name ambari1 -v  ${AMBARI_SRC:-$(pwd)}:/tmp/ambari ambari/build /tmp/ambari-build-docker/install.sh
 
 ```
 
