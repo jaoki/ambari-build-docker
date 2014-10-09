@@ -5,7 +5,7 @@
         {
             "hosts": [
                 {
-                    "fqdn": "host1.mydomain.com"
+                    "fqdn": "node1.mydomain.com"
                 }
             ],
             "name": "host_group_1"
