@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # coding: utf-8
 
-import subprocess, time
+import subprocess, time, sys
 import json
 
 SKIP_TEST="-DskipTests"
@@ -69,8 +69,8 @@ def waitUntilAmbariAgentRegistered():
 				AMBARI_AUTH_HEADERS,
 				stdout=subprocess.PIPE,
 				shell=True)
-		hostsResultJsonString = proc.stdout.read()
-		hostsResultJson = json.loads(hostsResultJsonString)
+		hostsResultString = proc.stdout.read()
+		hostsResultJson = json.loads(hostsResultString)
 		if len(hostsResultJson["items"]) != 0:
 			break
 		time.sleep(5)
@@ -91,18 +91,117 @@ def createCluster():
 			shell=True)
 	proc.wait()
 
-buildAmbari()
-installAmbariServer()
-installAmbariAgent()
-startNtpdService()
-setupAmbariServer()
-startAmbariServer()
-startSshdService()
-configureAmbariAgent()
-startAmbariAgent()
-postBlueprint()
-createCluster()
-
 # Loop to not to exit Docker container
-while True:
-	time.sleep(60)
+def noExit():
+	print "loop to not to exit docker container..."
+	while True:
+		time.sleep(60)
+
+class ParseResult:
+	isRebuild = False
+	isTest = False
+	isInstallServer = False
+	isInstallAgent = False
+	isDeploy = False
+
+def parse(argv):
+	result = ParseResult()
+	if len(argv) >=2:
+		if argv[1] == "-b":
+			result.isRebuild = True
+
+	if argv[0] == "test":
+		result.isTest = True
+
+	if argv[0] == "installServer":
+		result.isInstallServer = True
+
+	if argv[0] == "installAgent":
+		result.isInstallServer = True
+		result.isInstallAgent = True
+
+	if argv[0] == "deploy":
+		result.isInstallServer = True
+		result.isInstallAgent = True
+		result.isDeploy = True
+
+	return result
+
+
+# TODO move this to a proper location
+def unittest():
+	# parse
+	result = parse(["test"])
+	assert result.isTest == True
+	assert result.isRebuild == False
+	assert result.isInstallServer == False
+	assert result.isInstallAgent == False
+	assert result.isDeploy == False
+
+	result = parse(["installServer"])
+	assert result.isTest == False
+	assert result.isRebuild == False
+	assert result.isInstallServer == True
+	assert result.isInstallAgent == False
+	assert result.isDeploy == False
+
+	result = parse(["installAgent"])
+	assert result.isTest == False
+	assert result.isRebuild == False
+	assert result.isInstallServer == True
+	assert result.isInstallAgent == True
+	assert result.isDeploy == False
+
+	result = parse(["installAgent", "-b"])
+	assert result.isTest == False
+	assert result.isRebuild == True
+	assert result.isInstallServer == True
+	assert result.isInstallAgent == True
+	assert result.isDeploy == False
+
+	result = parse(["deploy"])
+	assert result.isTest == False
+	assert result.isRebuild == False
+	assert result.isInstallServer == True
+	assert result.isInstallAgent == True
+	assert result.isDeploy == True
+
+
+if len(sys.argv) == 1:
+	print "specify one of unittest, test, installServer, installAgent, deploy"
+	sys.exit(1)
+
+if sys.argv[1] == "unittest":
+	unittest()
+	sys.exit(0)
+
+# test: execute unit test
+# installServer: install ambari-server
+#    with or without rebuild
+# installAgent: install ambari-server and ambari-agent
+#    with or without rebuild
+# deploy: install ambari-server, ambari-agent and deploy Hadoop
+#    with or without rebuild
+
+parsedArgv = parse(sys.argv[1:])
+if parsedArgv.isRebuild:
+	buildAmbari()
+
+if parsedArgv.isInstallServer:
+	installAmbariServer()
+	setupAmbariServer()
+	startAmbariServer()
+	startSshdService()
+	startNtpdService()
+
+if parsedArgv.isInstallAgent:
+	installAmbariAgent()
+	configureAmbariAgent()
+	startAmbariAgent()
+
+if parsedArgv.isDeploy:
+	postBlueprint()
+	createCluster()
+
+noExit()
+
