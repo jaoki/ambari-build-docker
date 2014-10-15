@@ -8,11 +8,17 @@ SKIP_TEST="-DskipTests"
 AMBARI_AUTH_HEADERS = "--header 'Authorization:Basic YWRtaW46YWRtaW4=' --header 'X-Requested-By: PIVOTAL'"
 AMBARI_BUILD_DOCKER_ROOT = "/tmp/ambari-build-docker"
 
+def ambariUnitTest():
+	proc = subprocess.Popen("mvn -fae clean install",
+			shell=True,
+			cwd="/tmp/ambari")
+	return proc.wait()
+
 def buildAmbari():
 	proc = subprocess.Popen("mvn -B clean install package rpm:rpm -Dmaven.clover.skip=true -Dfindbugs.skip=true " + SKIP_TEST + " -Dpython.ver=\"python >= 2.6\" -Preplaceurl",
 			shell=True,
 			cwd="/tmp/ambari")
-	proc.wait()
+	return proc.wait()
 
 def installAmbariServer():
 	proc = subprocess.Popen("sudo yum install -y ambari-server-*.noarch.rpm",
@@ -166,6 +172,12 @@ def unittest():
 	assert result.isInstallAgent == True
 	assert result.isDeploy == True
 
+	result = parse(["deploy", "-b"])
+	assert result.isTest == False
+	assert result.isRebuild == True
+	assert result.isInstallServer == True
+	assert result.isInstallAgent == True
+	assert result.isDeploy == True
 
 if len(sys.argv) == 1:
 	print "specify one of unittest, test, installServer, installAgent, deploy"
@@ -184,8 +196,15 @@ if sys.argv[1] == "unittest":
 #    with or without rebuild
 
 parsedArgv = parse(sys.argv[1:])
+
+if parsedArgv.isTest:
+	retcode = ambariUnitTest()
+	sys.exit(retcode)
+
 if parsedArgv.isRebuild:
-	buildAmbari()
+	retcode = buildAmbari()
+	if retcode != 0:
+		sys.exit(retcode)
 
 if parsedArgv.isInstallServer:
 	installAmbariServer()

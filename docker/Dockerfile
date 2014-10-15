@@ -4,6 +4,8 @@ RUN echo root:changeme | chpasswd
 
 ## Install some basic utilities that aren't in the default image
 RUN yum -y install vim wget rpm-build sudo which telnet tar openssh-server openssh-clients ntp git python-setuptools
+# phantomjs dependency
+RUN yum -y install fontconfig freetype libfreetype.so.6 libfontconfig.so.1 libstdc++.so.6
 RUN rpm -e --nodeps --justdb glibc-common
 RUN yum -y install glibc-common
 
