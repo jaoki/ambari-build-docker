@@ -119,10 +119,10 @@ def parse(argv):
 	if argv[0] == "test":
 		result.isTest = True
 
-	if argv[0] == "installServer":
+	if argv[0] == "server":
 		result.isInstallServer = True
 
-	if argv[0] == "installAgent":
+	if argv[0] == "agent":
 		result.isInstallServer = True
 		result.isInstallAgent = True
 
@@ -144,21 +144,21 @@ def unittest():
 	assert result.isInstallAgent == False
 	assert result.isDeploy == False
 
-	result = parse(["installServer"])
+	result = parse(["server"])
 	assert result.isTest == False
 	assert result.isRebuild == False
 	assert result.isInstallServer == True
 	assert result.isInstallAgent == False
 	assert result.isDeploy == False
 
-	result = parse(["installAgent"])
+	result = parse(["agent"])
 	assert result.isTest == False
 	assert result.isRebuild == False
 	assert result.isInstallServer == True
 	assert result.isInstallAgent == True
 	assert result.isDeploy == False
 
-	result = parse(["installAgent", "-b"])
+	result = parse(["agent", "-b"])
 	assert result.isTest == False
 	assert result.isRebuild == True
 	assert result.isInstallServer == True
@@ -180,7 +180,7 @@ def unittest():
 	assert result.isDeploy == True
 
 if len(sys.argv) == 1:
-	print "specify one of unittest, test, installServer, installAgent, deploy"
+	print "specify one of unittest, test, server, agent, deploy"
 	sys.exit(1)
 
 if sys.argv[1] == "unittest":
@@ -188,9 +188,9 @@ if sys.argv[1] == "unittest":
 	sys.exit(0)
 
 # test: execute unit test
-# installServer: install ambari-server
+# server: install ambari-server
 #    with or without rebuild
-# installAgent: install ambari-server and ambari-agent
+# agent: install ambari-server and ambari-agent
 #    with or without rebuild
 # deploy: install ambari-server, ambari-agent and deploy Hadoop
 #    with or without rebuild
