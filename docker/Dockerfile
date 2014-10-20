@@ -12,8 +12,10 @@ RUN yum -y install glibc-common
 ENV HOME /root
 
 #Install JAVA
-RUN wget --no-check-certificate --no-cookies --header "Cookie:oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/7u55-b13/jdk-7u55-linux-x64.rpm -O jdk-7u55-linux-x64.rpm
-RUN yum -y install jdk-7u55-linux-x64.rpm
+# RUN wget --no-check-certificate --no-cookies --header "Cookie:oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/7u55-b13/jdk-7u55-linux-x64.rpm -O jdk-7u55-linux-x64.rpm
+RUN wget --no-check-certificate --no-cookies --header "Cookie:oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/6u45-b06/jdk-6u45-linux-x64-rpm.bin -O jdk-6u45-linux-x64-rpm.bin
+# RUN yum -y install jdk-7u55-linux-x64.rpm
+RUN yum -y install jdk-6u45-linux-x64-rpm.bin
 ENV JAVA_HOME /usr/java/default/
 
 #Install Maven
