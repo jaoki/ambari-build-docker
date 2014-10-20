@@ -3,6 +3,7 @@
 
 import subprocess, time, sys
 import json
+from optparse import OptionParser
 
 SKIP_TEST="-DskipTests"
 AMBARI_AUTH_HEADERS = "--header 'Authorization:Basic YWRtaW46YWRtaW4=' --header 'X-Requested-By: PIVOTAL'"
@@ -14,8 +15,13 @@ def ambariUnitTest():
 			cwd="/tmp/ambari")
 	return proc.wait()
 
-def buildAmbari():
-	proc = subprocess.Popen("mvn -B clean install package rpm:rpm -Dmaven.clover.skip=true -Dfindbugs.skip=true " + SKIP_TEST + " -Dpython.ver=\"python >= 2.6\" -Preplaceurl",
+def buildAmbari(stackDistribution=None):
+	stackDistributionParam = ""
+	if stackDistribution is not None:
+		stackDistributionParam = "-Dstack.distribution=" + stackDistribution
+	proc = subprocess.Popen("mvn -B clean install package rpm:rpm -Dmaven.clover.skip=true -Dfindbugs.skip=true "
+						+ SKIP_TEST + " "
+						+ stackDistributionParam + " -Dpython.ver=\"python >= 2.6\" -Preplaceurl",
 			shell=True,
 			cwd="/tmp/ambari")
 	return proc.wait()
@@ -105,6 +111,7 @@ def noExit():
 
 class ParseResult:
 	isRebuild = False
+	stackDistribution = None
 	isTest = False
 	isInstallServer = False
 	isInstallAgent = False
@@ -113,8 +120,14 @@ class ParseResult:
 def parse(argv):
 	result = ParseResult()
 	if len(argv) >=2:
-		if argv[1] == "-b":
+		parser = OptionParser()
+		parser.add_option("-b", "--rebuild", dest="isRebuild", action="store_true", default=False)
+		parser.add_option("-s", "--stackDistribution", dest="stackDistribution")
+		(options, args) = parser.parse_args(argv[1:])
+		if options.isRebuild:
 			result.isRebuild = True
+		if options.stackDistribution:
+			result.stackDistribution = options.stackDistribution
 
 	if argv[0] == "test":
 		result.isTest = True
@@ -140,6 +153,7 @@ def unittest():
 	result = parse(["test"])
 	assert result.isTest == True
 	assert result.isRebuild == False
+	assert result.stackDistribution == None
 	assert result.isInstallServer == False
 	assert result.isInstallAgent == False
 	assert result.isDeploy == False
@@ -147,6 +161,7 @@ def unittest():
 	result = parse(["server"])
 	assert result.isTest == False
 	assert result.isRebuild == False
+	assert result.stackDistribution == None
 	assert result.isInstallServer == True
 	assert result.isInstallAgent == False
 	assert result.isDeploy == False
@@ -154,6 +169,7 @@ def unittest():
 	result = parse(["agent"])
 	assert result.isTest == False
 	assert result.isRebuild == False
+	assert result.stackDistribution == None
 	assert result.isInstallServer == True
 	assert result.isInstallAgent == True
 	assert result.isDeploy == False
@@ -161,6 +177,7 @@ def unittest():
 	result = parse(["agent", "-b"])
 	assert result.isTest == False
 	assert result.isRebuild == True
+	assert result.stackDistribution == None
 	assert result.isInstallServer == True
 	assert result.isInstallAgent == True
 	assert result.isDeploy == False
@@ -168,13 +185,15 @@ def unittest():
 	result = parse(["deploy"])
 	assert result.isTest == False
 	assert result.isRebuild == False
+	assert result.stackDistribution == None
 	assert result.isInstallServer == True
 	assert result.isInstallAgent == True
 	assert result.isDeploy == True
 
-	result = parse(["deploy", "-b"])
+	result = parse(["deploy", "-b", "--s=BIGTOP"])
 	assert result.isTest == False
 	assert result.isRebuild == True
+	assert result.stackDistribution == "BIGTOP"
 	assert result.isInstallServer == True
 	assert result.isInstallAgent == True
 	assert result.isDeploy == True
