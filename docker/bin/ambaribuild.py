@@ -9,13 +9,21 @@ SKIP_TEST="-DskipTests"
 AMBARI_AUTH_HEADERS = "--header 'Authorization:Basic YWRtaW46YWRtaW4=' --header 'X-Requested-By: PIVOTAL'"
 AMBARI_BUILD_DOCKER_ROOT = "/tmp/ambari-build-docker"
 
+def gitDeepCleaning():
+	proc = subprocess.Popen("git clean -xdf",
+			shell=True,
+			cwd="/tmp/ambari")
+	proc.wait()
+
 def ambariUnitTest():
+	gitDeepCleaning()
 	proc = subprocess.Popen("mvn -fae clean install",
 			shell=True,
 			cwd="/tmp/ambari")
 	return proc.wait()
 
 def buildAmbari(stackDistribution=None):
+	gitDeepCleaning()
 	stackDistributionParam = ""
 	if stackDistribution is not None:
 		stackDistributionParam = "-Dstack.distribution=" + stackDistribution
