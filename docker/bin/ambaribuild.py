@@ -198,7 +198,7 @@ def unittest():
 	assert result.isInstallAgent == True
 	assert result.isDeploy == True
 
-	result = parse(["deploy", "-b", "--s=BIGTOP"])
+	result = parse(["deploy", "-b", "-s", "BIGTOP"])
 	assert result.isTest == False
 	assert result.isRebuild == True
 	assert result.stackDistribution == "BIGTOP"
