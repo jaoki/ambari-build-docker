@@ -22,7 +22,7 @@ def ambariUnitTest():
 			cwd="/tmp/ambari")
 	return proc.wait()
 
-def buildAmbari(stackDistribution=None):
+def buildAmbari(stackDistribution):
 	gitDeepCleaning()
 	stackDistributionParam = ""
 	if stackDistribution is not None:
@@ -229,7 +229,7 @@ if parsedArgv.isTest:
 	sys.exit(retcode)
 
 if parsedArgv.isRebuild:
-	retcode = buildAmbari()
+	retcode = buildAmbari(parsedArgv.stackDistribution)
 	if retcode != 0:
 		sys.exit(retcode)
 
