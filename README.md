@@ -17,7 +17,7 @@ docker run --privileged -t -i -p 80:80 -p 5005:5005 -p 8080:8080 -h node1.mydoma
 # build, install ambari and deploy hadoop in container
 cd {ambari src}
 docker rm ambari1
-docker run --privileged -t -p 80:80 -p 5005:5005 -p 8080:8080 -h node1.mydomain.com --name ambari1 -v ${AMBARI_SRC:-$(pwd)}:/tmp/ambari ambari/build /tmp/ambari-build-docker/bin/ambaribuild.py [test|server|agent|deploy] [-b] [s [HDP|BIGTOP|PHD]]
+docker run --privileged -t -p 80:80 -p 5005:5005 -p 8080:8080 -h node1.mydomain.com --name ambari1 -v ${AMBARI_SRC:-$(pwd)}:/tmp/ambari ambari/build /tmp/ambari-build-docker/bin/ambaribuild.py [test|server|agent|deploy] [-b] [-s [HDP|BIGTOP|PHD]]
 where
 test: mvn test
 server: install and run ambari-server

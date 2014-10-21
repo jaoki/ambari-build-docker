@@ -129,8 +129,14 @@ def parse(argv):
 	result = ParseResult()
 	if len(argv) >=2:
 		parser = OptionParser()
-		parser.add_option("-b", "--rebuild", dest="isRebuild", action="store_true", default=False)
-		parser.add_option("-s", "--stackDistribution", dest="stackDistribution")
+		parser.add_option("-b", "--rebuild",
+				dest="isRebuild",
+				action="store_true",
+				default=False,
+				help="set this flag if you want to rebuild Ambari code")
+		parser.add_option("-s", "--stackDistribution",
+				dest="stackDistribution",
+				help="set a stack distribution. [HDP|PHD|BIGTOP]. Make sure -b is also set when you set a stack distribution")
 		(options, args) = parser.parse_args(argv[1:])
 		if options.isRebuild:
 			result.isRebuild = True
