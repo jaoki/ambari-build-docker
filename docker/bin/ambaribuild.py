@@ -46,11 +46,6 @@ def installAmbariAgent():
 			cwd="/tmp/ambari/ambari-agent/target/rpm/ambari-agent/RPMS/x86_64")
 	proc.wait()
 
-def startNtpdService():
-	proc = subprocess.Popen("sudo service ntpd start",
-			shell=True)
-	proc.wait()
-
 def setupAmbariServer():
 	proc = subprocess.Popen("echo -e '\n\n\n\n' | sudo ambari-server setup",
 			shell=True)
@@ -61,8 +56,14 @@ def startAmbariServer(debug=False):
 			shell=True)
 	proc.wait()
 
-def startSshdService():
+def startDependantServices():
 	proc = subprocess.Popen("sudo service sshd start",
+			shell=True)
+	proc.wait()
+	proc = subprocess.Popen("sudo service ntpd start",
+			shell=True)
+	proc.wait()
+	proc = subprocess.Popen("sudo service httpd start",
 			shell=True)
 	proc.wait()
 
@@ -250,8 +251,7 @@ if parsedArgv.isInstallServer:
 	installAmbariServer()
 	setupAmbariServer()
 	startAmbariServer()
-	startSshdService()
-	startNtpdService()
+	startDependantServices()
 
 if parsedArgv.isInstallAgent:
 	installAmbariAgent()
