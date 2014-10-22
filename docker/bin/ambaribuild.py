@@ -29,7 +29,7 @@ def buildAmbari(stackDistribution):
 		stackDistributionParam = "-Dstack.distribution=" + stackDistribution
 	proc = subprocess.Popen("mvn -B clean install package rpm:rpm -Dmaven.clover.skip=true -Dfindbugs.skip=true "
 						+ SKIP_TEST + " "
-						+ stackDistributionParam + " -Dpython.ver=\"python >= 2.6\" -Preplaceurl",
+						+ stackDistributionParam + " -Dpython.ver=\"python >= 2.6\"",
 			shell=True,
 			cwd="/tmp/ambari")
 	return proc.wait()
@@ -78,9 +78,15 @@ def startAmbariAgent(waitUntilRegistered = True):
 			shell=True)
 	proc.wait()
 	if waitUntilRegistered:
-		waitUntilAmbariAgentRegistered()
+		if not waitUntilAmbariAgentRegistered():
+			print "ERROR: ambari-agent was not registered."
+			sys.exit(1)
 	
 def waitUntilAmbariAgentRegistered():
+	'''
+	return True if ambari agent is found registered.
+	return False if timeout
+	'''
 	count = 0
 	while count < 20:
 		count += 1
@@ -92,8 +98,9 @@ def waitUntilAmbariAgentRegistered():
 		hostsResultString = proc.stdout.read()
 		hostsResultJson = json.loads(hostsResultString)
 		if len(hostsResultJson["items"]) != 0:
-			break
+			return True
 		time.sleep(5)
+	return False
 
 def postBlueprint():
 	proc = subprocess.Popen("curl -X POST -D - " +
